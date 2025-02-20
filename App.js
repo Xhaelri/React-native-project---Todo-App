@@ -41,8 +41,8 @@ export default function App() {
       <View style={styles.dividerLine}></View>
       <View style={styles.btnContainer}>
         <View>
-          <TouchableOpacity activeOpacity={0.8} style={styles.btn}>
-            <Text style={styles.text}>All</Text>
+          <TouchableOpacity activeOpacity={0.8} style={styles.activeBtn}>
+            <Text style={styles.activeText}>All</Text>
           </TouchableOpacity>
         </View>
         <View>
@@ -95,6 +95,9 @@ const styles = StyleSheet.create({
   text: {
     color: "white",
   },
+  activeText:{
+    color: "black",
+  },
   dividerLine: {
     height: 1,
     width: "90%",
@@ -108,11 +111,21 @@ const styles = StyleSheet.create({
   },
   btn: {
     width: 100,
-    backgroundColor: "#000",
+    backgroundColor: "black",
     justifyContent: "center",
     alignItems: "center",
     padding: 10,
     borderRadius: 15,
+  },
+  activeBtn:{
+    backgroundColor: "#fff",
+    width: 100,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 10,
+    borderRadius: 15,
+    borderColor: "black",
+    borderWidth: 1,
   },
   todo: {
     borderWidth: 1,
