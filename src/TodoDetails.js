@@ -1,12 +1,32 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View, Text } from "react-native";
+import React, { useEffect } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 const TodoDetails = () => {
-  return (
-    <View>
-      <Text>TodoDetails</Text>
-    </View>
-  )
-}
+  const { navigate, goBack } = useNavigation();
+  const { params } = useRoute();
 
-export default TodoDetails
+
+
+  useEffect(() => {
+    console.log(params);
+  }, [params]);
+
+  return (
+    <SafeAreaView>
+      <View
+        style={{
+          padding: 20,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Text >{params.title}</Text>
+        <Text >{params.id}</Text>
+      </View>
+    </SafeAreaView>
+  );
+};
+
+export default TodoDetails;

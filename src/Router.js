@@ -1,22 +1,37 @@
-import { View, Text } from "react-native";
 import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
-import Home from "./Home";
-import TodoDetails from "./TodoDetails";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import CompletedTodos from "./CompletedTodos";
+import StackNavigator from "./StackNavigator";
 
-const Stack = createNativeStackNavigator();
+const Tabs = createBottomTabNavigator();
 const Router = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Home"
-          component={Home}
-          options={{ title: "Todo App" }}
-        />
-        <Stack.Screen name="Todo Details" component={TodoDetails} />
-      </Stack.Navigator>
+      <Tabs.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ color, size }) => {
+            if (route.name === "Main") {
+              return <Ionicons name="home" size={size} color={color} />;
+            } else if (route.name === "CompletedTodos") {
+              return (
+                <FontAwesome
+                  name="calendar-check-o"
+                  size={size}
+                  color={color}
+                />
+              );
+            }
+          },
+          tabBarActiveTintColor: "#0058",
+          tabBarInactiveTintColor: "gray",
+        })}
+      >
+        <Tabs.Screen name="Main" component={StackNavigator} />
+        <Tabs.Screen name="CompletedTodos" component={CompletedTodos} />
+      </Tabs.Navigator>
     </NavigationContainer>
   );
 };
