@@ -8,6 +8,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import Router from "./src/Router";
 
 export default function App() {
   const [todo, setTodo] = useState([
@@ -22,44 +23,8 @@ export default function App() {
   ]);
 
   return (
-    <View style={styles.container}>
-      <View>
-        <Text style={styles.title}>Todo app </Text>
-      </View>
-      <View>
-        <TextInput placeholder="Enter title" style={styles.input}></TextInput>
-        <TextInput
-          placeholder="Enter Description"
-          style={styles.input}
-        ></TextInput>
-      </View>
-      <View>
-        <TouchableOpacity activeOpacity={0.8} style={styles.submitBtn}>
-          <Text style={styles.text}>Submit</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.dividerLine}></View>
-      <View style={styles.btnContainer}>
-        <View>
-          <TouchableOpacity activeOpacity={0.8} style={styles.activeBtn}>
-            <Text style={styles.activeText}>All</Text>
-          </TouchableOpacity>
-        </View>
-        <View>
-          <TouchableOpacity activeOpacity={0.8} style={styles.btn}>
-            <Text style={styles.text}>In progress</Text>
-          </TouchableOpacity>
-        </View>
-        <View>
-          <TouchableOpacity activeOpacity={0.8} style={styles.btn}>
-            <Text style={styles.text}>Done</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      <FlatList data={todo} keyExtractor={(item) => item.id} renderItem={({item})=>(
-        <Text style={styles.todo}>{item.title}</Text>
-      )}/>
-    </View>
+    
+<Router />
   );
 }
 
