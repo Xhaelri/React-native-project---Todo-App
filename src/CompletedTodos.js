@@ -4,7 +4,9 @@ import React from 'react'
 const CompletedTodos = () => {
   return (
     <View>
-      <Text>CompletedTodos</Text>
+      <View>
+        <Text>CompletedTodos</Text>
+      </View>
     </View>
   )
 }
