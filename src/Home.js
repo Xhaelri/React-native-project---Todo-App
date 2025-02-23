@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, SafeAreaView, StyleSheet } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import TodoForm from "./TodoForm";
 import TodoList from "./TodoList";
 
@@ -8,6 +9,35 @@ const Home = () => {
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+
+  useEffect(() => {
+    const loadTodos = async () => {
+      try {
+        const storedTodos = await AsyncStorage.getItem("todos");
+        if (storedTodos) {
+          console.log("Stored Todos:", JSON.parse(storedTodos)); 
+          setTodos(JSON.parse(storedTodos));
+        }
+      } catch (error) {
+        console.error("Failed to load todos:", error);
+      }
+    };
+  
+    loadTodos();
+  }, []);
+  
+
+  useEffect(() => {
+    const saveTodos = async () => {
+      try {
+        await AsyncStorage.setItem("todos", JSON.stringify(todos));
+      } catch (error) {
+        console.error("Failed to save todos:", error);
+      }
+    };
+
+      saveTodos();
+  }, [todos]);
 
   const addNewTodo = () => {
     if (!title || !description) return;
@@ -24,16 +54,18 @@ const Home = () => {
     setDescription("");
   };
 
-  const deleteTodo = (id) => {
-    setTodos((prevTodos) => prevTodos.filter((item) => item.id !== id));
+  const deleteTodo = async (id) => {
+    const updatedTodos = todos.filter((item) => item.id !== id);
+    setTodos(updatedTodos);
+    await AsyncStorage.setItem("todos", JSON.stringify(updatedTodos));
   };
 
-  const toggleTodoCompletion = (id) => {
-    setTodos((prevTodos) =>
-      prevTodos.map((item) =>
-        item.id === id ? { ...item, isDone: !item.isDone } : item
-      )
+  const toggleTodoCompletion = async (id) => {
+    const updatedTodos = todos.map((item) =>
+      item.id === id ? { ...item, isDone: !item.isDone } : item
     );
+    setTodos(updatedTodos);
+    await AsyncStorage.setItem("todos", JSON.stringify(updatedTodos));
   };
 
   const getFilteredTodos = () => {
@@ -43,7 +75,7 @@ const Home = () => {
       case "done":
         return todos.filter((todo) => todo.isDone);
       default:
-        return todos; 
+        return todos;
     }
   };
 
@@ -61,11 +93,11 @@ const Home = () => {
       />
       {todos.length > 0 && (
         <TodoList
-          filteredTodos={getFilteredTodos()} 
+          filteredTodos={getFilteredTodos()}
           toggleTodoCompletion={toggleTodoCompletion}
           deleteTodo={deleteTodo}
           selectedFilter={selectedFilter}
-          handleFilterChange={setSelectedFilter} 
+          handleFilterChange={setSelectedFilter}
         />
       )}
     </SafeAreaView>
