@@ -1,43 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, SafeAreaView, StyleSheet } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import TodoForm from "./TodoForm";
-import TodoList from "./TodoList";
+// Home.js
+import React, { useEffect, useState } from 'react';
+import { View, Text, SafeAreaView, StyleSheet } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { loadTodos, addTodo, deleteTodo, toggleTodoCompletion, setFilter } from './Redux/slices/todosSlice'; 
+import TodoForm from './TodoForm';
+import TodoList from './TodoList';
 
-const Home = () => {
-  const [todos, setTodos] = useState([]);
-  const [selectedFilter, setSelectedFilter] = useState("all");
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-
-  useEffect(() => {
-    const loadTodos = async () => {
-      try {
-        const storedTodos = await AsyncStorage.getItem("todos");
-        if (storedTodos) {
-          console.log("Stored Todos:", JSON.parse(storedTodos)); 
-          setTodos(JSON.parse(storedTodos));
-        }
-      } catch (error) {
-        console.error("Failed to load todos:", error);
-      }
-    };
-  
-    loadTodos();
-  }, []);
-  
+const Home = ({ navigation }) => {
+  const dispatch = useDispatch();
+  const { todos, selectedFilter } = useSelector((state) => state.todos); 
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
 
   useEffect(() => {
-    const saveTodos = async () => {
-      try {
-        await AsyncStorage.setItem("todos", JSON.stringify(todos));
-      } catch (error) {
-        console.error("Failed to save todos:", error);
-      }
-    };
-
-      saveTodos();
-  }, [todos]);
+    dispatch(loadTodos());
+  }, [dispatch]);
 
   const addNewTodo = () => {
     if (!title || !description) return;
@@ -49,30 +26,28 @@ const Home = () => {
       isDone: false,
     };
 
-    setTodos((prevTodos) => [...prevTodos, newTodo]);
-    setTitle("");
-    setDescription("");
+    dispatch(addTodo(newTodo)); 
+    setTitle('');
+    setDescription('');
   };
 
-  const deleteTodo = async (id) => {
-    const updatedTodos = todos.filter((item) => item.id !== id);
-    setTodos(updatedTodos);
-    await AsyncStorage.setItem("todos", JSON.stringify(updatedTodos));
+  const handleDeleteTodo = (id) => {
+    dispatch(deleteTodo(id)); 
   };
 
-  const toggleTodoCompletion = async (id) => {
-    const updatedTodos = todos.map((item) =>
-      item.id === id ? { ...item, isDone: !item.isDone } : item
-    );
-    setTodos(updatedTodos);
-    await AsyncStorage.setItem("todos", JSON.stringify(updatedTodos));
+  const handleToggleTodoCompletion = (id) => {
+    dispatch(toggleTodoCompletion(id));
+  };
+
+  const handleFilterChange = (filter) => {
+    dispatch(setFilter(filter));
   };
 
   const getFilteredTodos = () => {
     switch (selectedFilter) {
-      case "inProgress":
+      case 'inProgress':
         return todos.filter((todo) => !todo.isDone);
-      case "done":
+      case 'done':
         return todos.filter((todo) => todo.isDone);
       default:
         return todos;
@@ -94,10 +69,11 @@ const Home = () => {
       {todos.length > 0 && (
         <TodoList
           filteredTodos={getFilteredTodos()}
-          toggleTodoCompletion={toggleTodoCompletion}
-          deleteTodo={deleteTodo}
+          toggleTodoCompletion={handleToggleTodoCompletion}
+          deleteTodo={handleDeleteTodo}
           selectedFilter={selectedFilter}
-          handleFilterChange={setSelectedFilter}
+          handleFilterChange={handleFilterChange}
+          navigation={navigation}
         />
       )}
     </SafeAreaView>
@@ -107,14 +83,14 @@ const Home = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "start",
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'start',
     paddingTop: 50,
   },
   title: {
     fontSize: 36,
-    fontFamily: "Roboto",
+    fontFamily: 'Roboto',
   },
 });
 
